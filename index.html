@@ -66,7 +66,6 @@
             filter: blur(0px);
         }
 
-        /* Efekt rozmycia w ruchu odpalamy przez JS */
         .wheel.spinning {
             filter: blur(1.5px);
         }
@@ -223,47 +222,37 @@
             resultDiv.classList.remove('show');
             wheel.classList.add('spinning');
             
-            // Efekt "szarpnięcia" igły na starcie
             pointer.classList.add('click');
 
-            // Losowanie (1-100) -> 100 to TAK (1% szans)
+            // Losowanie (1-100)
             const chance = Math.floor(Math.random() * 100) + 1;
             let targetAngle = 0;
             let resultText = "";
             let resultColor = "";
-            let neonShadow = "";
 
             if (chance === 100) {
-                targetAngle = 0; // Idealnie na zielony pasek
+                targetAngle = 0; 
                 resultText = "🎉 TAK! CUD SIĘ WYDARZYŁ! 🎉";
-                resultColor = var(--color-tak);
-                neonShadow = '0 0 20px var(--color-tak)';
+                resultColor = "#00ff66"; // Poprawione na czysty hex string
             } else {
-                // Losowy kąt na czerwonym polu, omijając zieloną przerwę na górze
                 targetAngle = Math.floor(Math.random() * 350) + 5;
                 resultText = "❌ NIE. Klasyka. ❌";
-                resultColor = var(--color-nie);
-                neonShadow = '0 0 20px var(--color-nie)';
+                resultColor = "#ff3838"; // Poprawione na czysty hex string
             }
 
-            // Dodajemy min. 6 pełnych obrotów (2160 stopni) dla epickiego efektu wyczekiwania
             const extraRotations = 360 * 6;
             currentRotation += extraRotations + (360 - targetAngle) - (currentRotation % 360);
 
             wheel.style.transform = `rotate(${currentRotation}deg)`;
 
-            // Wyłączenie klikania igły po chwili
             setTimeout(() => { pointer.classList.remove('click'); }, 300);
 
-            // Finał animacji (po 4.5 sekundy)
             setTimeout(() => {
                 wheel.classList.remove('spinning');
                 
                 resultDiv.innerText = resultText;
-                // dynamiczne pobranie kolorów z CSS variables dla skryptu
-                const colorHex = chance === 100 ? '#00ff66' : '#ff3838';
-                resultDiv.style.color = colorHex;
-                resultDiv.style.textShadow = `0 0 15px ${colorHex}`;
+                resultDiv.style.color = resultColor;
+                resultDiv.style.textShadow = `0 0 15px ${resultColor}`;
                 resultDiv.classList.add('show');
                 
                 btn.disabled = false;
