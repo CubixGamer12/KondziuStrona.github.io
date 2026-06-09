@@ -5,153 +5,270 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Czy Konrad Tomczyk przyjdzie do szkoły?</title>
     <style>
+        :root {
+            --color-nie: #ff3838;
+            --color-tak: #00ff66;
+            --bg-dark: #0f172a;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            background-color: #f0f2f5;
+            background: radial-gradient(circle at center, #1e293b 0%, var(--bg-dark) 100%);
+            color: #ffffff;
+            overflow: hidden;
         }
+
         h1 {
-            color: #333;
+            font-size: 2.2rem;
+            font-weight: 800;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            letter-spacing: -0.5px;
         }
+
+        h1 span {
+            color: #38bdf8;
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-top: 5px;
+        }
+
+        .wheel-outer {
+            position: relative;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.05);
+        }
+
         .wheel-container {
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: 360px;
+            height: 360px;
         }
+
         .wheel {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 5px solid #333;
-            background: conic-gradient(#ff4d4d 0% 99%, #4caf50 99% 100%);
-            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            border: 8px solid #334155;
+            background: conic-gradient(var(--color-nie) 0% 99%, var(--color-tak) 99% 100%);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            transition: transform 4.5s cubic-bezier(0.15, 0.85, 0.1, 1);
+            filter: blur(0px);
         }
+
+        /* Efekt rozmycia w ruchu odpalamy przez JS */
+        .wheel.spinning {
+            filter: blur(1.5px);
+        }
+
         .pointer {
             position: absolute;
-            top: -15px;
+            top: -20px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 30px solid #333;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 35px solid #f1f5f9;
             z-index: 10;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            transform-origin: center top;
         }
+
+        .pointer.click {
+            animation: pointer-click 0.3s ease-in-out;
+        }
+
+        @keyframes pointer-click {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            50% { transform: translateX(-50%) rotate(-15deg); }
+            100% { transform: translateX(-50%) rotate(0deg); }
+        }
+
+        .center-cap {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: #334155;
+            border: 4px solid #f1f5f9;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            z-index: 5;
+        }
+
         button {
-            margin-top: 30px;
-            padding: 12px 24px;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            background-color: #007bff;
+            margin-top: 40px;
+            padding: 16px 40px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             border: none;
-            border-radius: 25px;
+            border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0,1);
-            transition: background 0.2s;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
         }
+
         button:hover {
-            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.6);
+            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
         }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            background: #475569;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         #result {
-            margin-top: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            min-height: 32px;
+            margin-top: 30px;
+            font-size: 28px;
+            font-weight: 800;
+            min-height: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(0.8);
         }
+
+        #result.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
         .legend {
-            margin-top: 20px;
+            margin-top: 40px;
             display: flex;
-            gap: 20px;
+            gap: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 25px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #94a3b8;
         }
+
         .box {
-            width: 15px;
-            height: 15px;
-            border-radius: 3px;
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Czy Konrad Tomczyk przyjdzie do szkoły?</h1>
+    <h1>Czy Konrad Tomczyk przyjdzie do szkoły? <span>Oficjalne losowanie</span></h1>
 
-    <div class="wheel-container">
-        <div class="pointer"></div>
-        <div class="wheel" id="wheel"></div>
+    <div class="wheel-outer">
+        <div class="wheel-container">
+            <div class="pointer" id="pointer"></div>
+            <div class="wheel" id="wheel"></div>
+            <div class="center-cap"></div>
+        </div>
     </div>
 
-    <button onclick="spinWheel()">Zakręć kołem!</button>
+    <button id="spin-btn" onclick="spinWheel()">ZAKRĘĆ KOŁEM</button>
 
     <div id="result"></div>
 
     <div class="legend">
-        <div class="legend-item"><div class="box" style="background: #ff4d4d;"></div> NIE (99%)</div>
-        <div class="legend-item"><div class="box" style="background: #4caf50;"></div> TAK (1%)</div>
+        <div class="legend-item"><div class="box" style="background: var(--color-nie); box-shadow: 0 0 10px var(--color-nie);"></div> NIE (99%)</div>
+        <div class="legend-item"><div class="box" style="background: var(--color-tak); box-shadow: 0 0 10px var(--color-tak);"></div> TAK (1%)</div>
     </div>
 
     <script>
         let isSpinning = false;
+        let currentRotation = 0;
 
         function spinWheel() {
             if (isSpinning) return;
             isSpinning = true;
             
             const wheel = document.getElementById('wheel');
+            const pointer = document.getElementById('pointer');
             const resultDiv = document.getElementById('result');
-            resultDiv.innerText = "";
+            const btn = document.getElementById('spin-btn');
 
-            // Losowanie liczby od 1 do 100
+            btn.disabled = true;
+            resultDiv.classList.remove('show');
+            wheel.classList.add('spinning');
+            
+            // Efekt "szarpnięcia" igły na starcie
+            pointer.classList.add('click');
+
+            // Losowanie (1-100) -> 100 to TAK (1% szans)
             const chance = Math.floor(Math.random() * 100) + 1;
             let targetAngle = 0;
             let resultText = "";
             let resultColor = "";
+            let neonShadow = "";
 
             if (chance === 100) {
-                // 1% szansy na TAK (zielony pasek na samej górze koła)
-                targetAngle = 0; 
-                resultText = "TAK! (Cud się wydarzył)";
-                resultColor = "#4caf50";
+                targetAngle = 0; // Idealnie na zielony pasek
+                resultText = "🎉 TAK! CUD SIĘ WYDARZYŁ! 🎉";
+                resultColor = var(--color-tak);
+                neonShadow = '0 0 20px var(--color-tak)';
             } else {
-                // 99% szansy na NIE (czerwone pole)
-                // Losujemy kąt tak, aby wskaźnik zatrzymał się na czerwonym polu (od 4 do 356 stopni)
-                targetAngle = Math.floor(Math.random() * 352) + 4;
-                resultText = "NIE.";
-                resultColor = "#ff4d4d";
+                // Losowy kąt na czerwonym polu, omijając zieloną przerwę na górze
+                targetAngle = Math.floor(Math.random() * 350) + 5;
+                resultText = "❌ NIE. Klasyka. ❌";
+                resultColor = var(--color-nie);
+                neonShadow = '0 0 20px var(--color-nie)';
             }
 
-            // Pełne obroty dla efektu (np. 5 pełnych obrotów + kąt docelowy)
-            const totalRotation = (360 * 5) - targetAngle;
+            // Dodajemy min. 6 pełnych obrotów (2160 stopni) dla epickiego efektu wyczekiwania
+            const extraRotations = 360 * 6;
+            currentRotation += extraRotations + (360 - targetAngle) - (currentRotation % 360);
 
-            wheel.style.transform = `rotate(${totalRotation}deg)`;
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
 
+            // Wyłączenie klikania igły po chwili
+            setTimeout(() => { pointer.classList.remove('click'); }, 300);
+
+            // Finał animacji (po 4.5 sekundy)
             setTimeout(() => {
-                resultDiv.innerText = resultText;
-                resultDiv.style.color = resultColor;
-                isSpinning = false;
+                wheel.classList.remove('spinning');
                 
-                // Resetowanie pozycji koła bez animacji, żeby można było kręcić znowu
-                setTimeout(() => {
-                    wheel.style.transition = 'none';
-                    wheel.style.transform = `rotate(${-targetAngle}deg)`;
-                    setTimeout(() => {
-                        wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
-                    }, 50);
-                }, 500);
-
-            }, 4000); // Czas trwania animacji (4 sekundy)
+                resultDiv.innerText = resultText;
+                // dynamiczne pobranie kolorów z CSS variables dla skryptu
+                const colorHex = chance === 100 ? '#00ff66' : '#ff3838';
+                resultDiv.style.color = colorHex;
+                resultDiv.style.textShadow = `0 0 15px ${colorHex}`;
+                resultDiv.classList.add('show');
+                
+                btn.disabled = false;
+                isSpinning = false;
+            }, 4500);
         }
     </script>
 
