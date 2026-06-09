@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Czy Konrad Tomczyk przyjdzie do szkoły?</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid #333;
+            background: conic-gradient(#ff4d4d 0% 99%, #4caf50 99% 100%);
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+        .pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid #333;
+            z-index: 10;
+        }
+        button {
+            margin-top: 30px;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0,1);
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            min-height: 32px;
+        }
+        .legend {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .box {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Czy Konrad Tomczyk przyjdzie do szkoły?</h1>
+
+    <div class="wheel-container">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel"></div>
+    </div>
+
+    <button onclick="spinWheel()">Zakręć kołem!</button>
+
+    <div id="result"></div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="box" style="background: #ff4d4d;"></div> NIE (99%)</div>
+        <div class="legend-item"><div class="box" style="background: #4caf50;"></div> TAK (1%)</div>
+    </div>
+
+    <script>
+        let isSpinning = false;
+
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+            
+            const wheel = document.getElementById('wheel');
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerText = "";
+
+            // Losowanie liczby od 1 do 100
+            const chance = Math.floor(Math.random() * 100) + 1;
+            let targetAngle = 0;
+            let resultText = "";
+            let resultColor = "";
+
+            if (chance === 100) {
+                // 1% szansy na TAK (zielony pasek na samej górze koła)
+                targetAngle = 0; 
+                resultText = "TAK! (Cud się wydarzył)";
+                resultColor = "#4caf50";
+            } else {
+                // 99% szansy na NIE (czerwone pole)
+                // Losujemy kąt tak, aby wskaźnik zatrzymał się na czerwonym polu (od 4 do 356 stopni)
+                targetAngle = Math.floor(Math.random() * 352) + 4;
+                resultText = "NIE.";
+                resultColor = "#ff4d4d";
+            }
+
+            // Pełne obroty dla efektu (np. 5 pełnych obrotów + kąt docelowy)
+            const totalRotation = (360 * 5) - targetAngle;
+
+            wheel.style.transform = `rotate(${totalRotation}deg)`;
+
+            setTimeout(() => {
+                resultDiv.innerText = resultText;
+                resultDiv.style.color = resultColor;
+                isSpinning = false;
+                
+                // Resetowanie pozycji koła bez animacji, żeby można było kręcić znowu
+                setTimeout(() => {
+                    wheel.style.transition = 'none';
+                    wheel.style.transform = `rotate(${-targetAngle}deg)`;
+                    setTimeout(() => {
+                        wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+                    }, 50);
+                }, 500);
+
+            }, 4000); // Czas trwania animacji (4 sekundy)
+        }
+    </script>
+
+</body>
+</html>
